@@ -31,7 +31,6 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const CP_SHOULDPROCESS = 4;
 
 const SERVICE_CTRID = "@eff.org/https-everywhere;1";
 const SERVICE_ID=Components.ID("{32c165b4-fe5e-4964-9250-603c410631b4}");
@@ -99,8 +98,6 @@ const HTML_NS = "http://www.w3.org/1999/xhtml";
 const WHERE_UNTRUSTED = 1;
 const WHERE_TRUSTED = 2;
 const ANYWHERE = 3;
-
-const N_COHORTS = 1000; 
 
 const DUMMY_OBJ = {};
 DUMMY_OBJ.wrappedJSObject = DUMMY_OBJ;
@@ -236,19 +233,6 @@ const TYPE_MEDIA = 15;
 // ACCEPT = 1
 
 
-// Some of these types are known by arbitrary assertion at
-// https://bugzilla.mozilla.org/show_bug.cgi?id=677643#c47
-// TYPE_FONT was required to fix https://trac.torproject.org/projects/tor/ticket/4194
-// TYPE_SUBDOCUMENT was required to fix https://trac.torproject.org/projects/tor/ticket/4149
-// I have NO IDEA why JS won't let me use the constants above in defining this
-const shouldLoadTargets = {
-  1 : true,
-  3 : true,
-  5 : true,
-  12 : true,
-  14 : true,
-  7 : true
-};
 
 
 
@@ -573,44 +557,6 @@ HTTPSEverywhere.prototype = {
     };
     if (!shown && !enabled)
       ssl_observatory.registerProxyTestNotification(obs_popup_callback);
-  },
-
-  maybeShowDevPopup: function() {
-    /*
-     * Users who installed 3.3.2 accidentally got upgraded to the
-     * dev branch. We need to push this code to a dev release so
-     * that they get a popup letting them know that they can switch
-     * back to the stable branch if they want.
-     */
-    var was_stable = true;
-    var shown = this.prefs.getBoolPref("dev_popup_shown");
-    try {
-      // this pref should exist only for people who used to be stable
-      // since getExperimentalFeatureCohort was never run in the
-      // development channel
-      this.prefs.getIntPref("experimental_feature_cohort");
-    } catch(e) {
-      was_stable = false;
-    }
-    if (was_stable && !shown) {
-      this.tab_opener("chrome://https-everywhere/content/dev-popup.xul");
-    }
-  },
-
-  getExperimentalFeatureCohort: function() {
-    // This variable is used for gradually turning on features for testing and
-    // scalability purposes.  It is a random integer [0,N_COHORTS) generated
-    // once and stored thereafter.
-    // 
-    // This is not currently used/called in the development branch
-    var cohort;
-    try {
-      cohort = this.prefs.getIntPref("experimental_feature_cohort");
-    } catch(e) {
-      cohort = Math.round(Math.random() * N_COHORTS);
-      this.prefs.setIntPref("experimental_feature_cohort", cohort);
-    }
-    return cohort;
   },
 
   // nsIChannelEventSink implementation
