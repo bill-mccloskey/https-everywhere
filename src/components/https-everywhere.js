@@ -317,7 +317,7 @@ HTTPSEverywhere.prototype = {
   _xpcom_categories: [
     {
       category: "app-startup",
-    },
+    }
   ],
 
   // QueryInterface implementation, e.g. using the generateQI helper
