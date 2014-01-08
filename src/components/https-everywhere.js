@@ -501,7 +501,6 @@ HTTPSEverywhere.prototype = {
     } else if (topic == "sessionstore-windows-restored") {
       this.log(DBUG,"Got sessionstore-windows-restored");
       this.maybeShowObservatoryPopup();
-      this.maybeShowDevPopup();
     } else if (topic == "nsPref:changed") {
         // If the user toggles the Mixed Content Blocker settings, reload the rulesets
         // to enable/disable the mixedcontent ones
