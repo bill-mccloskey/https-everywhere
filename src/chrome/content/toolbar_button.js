@@ -127,8 +127,8 @@ httpsEverywhere.toolbarButton = {
       return;
     }
 
-    var domWin = getDomWin();
-    var alist = HTTPSEverywhere.getExpando(domWin,"applicable_rules", null);
+    var browser = window.gBrowser.selectedBrowser;
+    var alist = HTTPSEverywhere.getExpando(browser,"applicable_rules", null);
     if (!alist) {
       return;
     }
@@ -200,20 +200,15 @@ function stitch_context_menu2() {
 var rulesetTestsMenuItem = null;
 
 function show_applicable_list(menupopup) {
-  var domWin = getDomWin();
-  if (!(domWin instanceof CI.nsIDOMWindow)) {
-    alert(domWin + " is not an nsIDOMWindow");
-    return null;
-  }
-
-  var alist = HTTPSEverywhere.getExpando(domWin,"applicable_rules", null);
+  var browser = gBrowser.selectedBrowser;
+  var alist = HTTPSEverywhere.getExpando(browser,"applicable_rules");
   var weird=false;
   
   if (!alist) {
     // This case occurs for error pages and similar.  We need a dummy alist
     // because populate_menu lives in there.  Would be good to refactor this
     // away.
-    alist = new HTTPSEverywhere.ApplicableList(HTTPSEverywhere.log, document, domWin);
+    alist = new HTTPSEverywhere.ApplicableList(HTTPSEverywhere.log, browser);
     weird = true;
   }
   alist.populate_menu(document, menupopup, weird);
@@ -259,13 +254,4 @@ function open_in_tab(url) {
                      .getService(Components.interfaces.nsIWindowMediator);
   var recentWindow = wm.getMostRecentWindow("navigator:browser");
   recentWindow.delayedOpenTab(url, null, null, null, null);
-}
-
-function getDomWin() {
-  return window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-               .getInterface(Components.interfaces.nsIWebNavigation)
-               .QueryInterface(Components.interfaces.nsIDocShellTreeItem)
-               .rootTreeItem
-               .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-               .getInterface(Components.interfaces.nsIDOMWindow);
 }

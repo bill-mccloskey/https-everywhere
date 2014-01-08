@@ -611,7 +611,7 @@ SSLObservatory.prototype = {
     var HTTPSEverywhere = CC["@eff.org/https-everywhere;1"]
                             .getService(Components.interfaces.nsISupports)
                             .wrappedJSObject;
-    var win = channel ? HTTPSEverywhere.getWindowForChannel(channel) : null;
+    var win = null;
     var req = this.buildRequest(params);
     req.timeout = TIMEOUT;
 
